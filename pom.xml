@@ -6,6 +6,20 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<description></description>
+	<properties>
+		<hbase.version>0.90.4-cdh3u2</hbase.version>
+	</properties>
+	<repositories>
+		<repository>
+			<id>CDH Releases and RCs Repositories</id>
+			<url>https://repository.cloudera.com/content/groups/cdh-releases-rcs</url>
+		</repository>
+	</repositories>
+	<dependencyManagement>
+		<dependencies>
+
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>jdk.tools</groupId>
@@ -46,6 +60,12 @@
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-common</artifactId>
 			<version>2.6.0</version>
+		</dependency>
+		<!-- HBase -->
+		<dependency>
+			<groupId>org.apache.hbase</groupId>
+			<artifactId>hbase</artifactId>
+			<version>${hbase.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
