@@ -2,6 +2,8 @@ package com.polyglot.hadoop.util;
 
 public interface Constant {
 
-	String SERVER_IP = "54.229.161.46";
+	String IP_SERVER = "54.154.3.4";
+	
+	int PORT_NAMENODE = 50010;
 
 }

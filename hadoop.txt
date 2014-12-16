@@ -1,19 +1,27 @@
-Set hostname in /etc/hosts
+sudo netstat -lptu
 
+1) Set hostname 
+vi /etc/hosts
+
+2) Remove language warnings, if they occur
 export LANGUAGE=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 locale-gen en_US.UTF-8
 dpkg-reconfigure locales
 
+3) Configure JRE
 Downlaod and extract JRE
 Set /etc/profile
 
+4) Create group and user
 sudo addgroup hadoop
 sudo adduser --ingroup hadoop hduser
 
+5) Install requirements
 sudo apt-get install ssh
 
+6) Configure system for installation
 su - hduser
 ssh-keygen -t rsa -P ‘’
 cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
@@ -24,20 +32,23 @@ ssh localhost & exit to test
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
-reboot
+
+Reboot
+
 cat /proc/sys/net/ipv6/conf/all/disable_ipv6
 
+7) Install Hadoop
 Download and extract Hadoop
-$ cd /usr/local
-$ sudo tar xzf hadoop-1.0.3.tar.gz
-$ sudo mv hadoop-1.0.3 hadoop
-$ sudo chown -R hduser:hadoop hadoop
+cd /usr/local
+sudo tar xzf hadoop-1.0.3.tar.gz
+sudo mv hadoop-1.0.3 hadoop
+sudo chown -R hduser:hadoop hadoop
 
 Set bashrc
 # Set Hadoop-related environment variables
 export HADOOP_HOME=/usr/local/hadoop
 
-# Set JAVA_HOME (we will also configure JAVA_HOME directly for Hadoop later on)
+# Set JAVA_HOME
 export JAVA_HOME=/usr/lib/jvm/java-6-sun
 
 # Some convenient aliases and functions for running Hadoop-related commands
@@ -62,6 +73,14 @@ lzohead () {
 # Add Hadoop bin/ directory to PATH
 export PATH=$PATH:$HADOOP_HOME/bin
 
+8) Set JAVA_HOME in Hadoop: /etc/hadoop/hadoop-env.sh
+
+9)  /usr/local/hadoop/sbin/start-all.sh
+
+NOTES
+1) You need to make sure the core-site.xml is serving to 0.0.0.0 instead of 127.0.0.1(localhost).
+If you get the EOF exception, it means that the port is not accessible externally on that ip, so there is no data to read between the hadoop client / server ipc.
 
 
-set java_home in hadoop/etc/hadoop/hadoop-env.sh
+-> chk how to fix port of datanode
+

@@ -14,7 +14,7 @@ import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.jboss.logging.Logger;
+import org.apache.log4j.Logger;
 
 import com.polyglot.hadoop.util.HadoopUtil;
 
@@ -25,7 +25,7 @@ public class TestHBase {
 	private Configuration configuration;
 
 	public TestHBase() {
-		configuration = HadoopUtil.getConfiguration();
+		configuration = HadoopUtil.getHBaseConfiguration();
 	}
 
 	public HTableInterface createTable(String tableName) throws IOException {

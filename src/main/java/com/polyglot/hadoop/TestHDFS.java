@@ -9,24 +9,25 @@ import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.SequenceFile.Metadata;
 import org.apache.hadoop.io.Writable;
-import org.jboss.logging.Logger;
+import org.apache.log4j.Logger;
 
 import com.polyglot.hadoop.util.HadoopUtil;
 
 public class TestHDFS {
 
-	private final Logger log = Logger.getLogger(TestHDFS.class);
+	private static final Logger log = Logger.getLogger(TestHDFS.class);
 
 	private Configuration configuration;
 
 	public TestHDFS() {
-		configuration = HadoopUtil.getConfiguration();
+		configuration = HadoopUtil.getHDFSConfiguration();
 	}
 
 	public static void main(String[] args) {
 		TestHDFS hdfs = new TestHDFS();
+		
 		try {
-			hdfs.createFile("");
+			hdfs.createFile("/test1");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -39,17 +40,17 @@ public class TestHDFS {
 		boolean created = false;
 
 		if (fs.exists(path)) {
-			log.info(file + " exists");
+			log.debug(file + " exists");
 		}
 
 		if (fs.isFile(path)) {
-			log.info(file + " is a file");
+			log.debug(file + " is a file");
 		}
 
 		created = fs.createNewFile(path);
 
 		if (created) {
-			log.info(path + " created");
+			log.debug(path + " created");
 		}
 
 		// FSDataInputStream in = fs.open(filePath);
