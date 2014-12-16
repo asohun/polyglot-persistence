@@ -6,15 +6,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-public class BoundingBox implements Serializable{
-	
+public class BoundingBox implements Serializable {
+
 	private static final long serialVersionUID = 1L;
 
 	private Point lowerLeft;
 	private Point upperRight;
 
 	public BoundingBox(double lat1, double lat2, double lon1, double lon2) {
-		
+
 		double minLon = Math.min(lon1, lon2);
 		double maxLon = Math.max(lon1, lon2);
 		double minLat = Math.min(lat1, lat2);
@@ -24,11 +24,11 @@ public class BoundingBox implements Serializable{
 	}
 
 	public BoundingBox(Point ll, Point ur) {
-		
+
 		lowerLeft = ll;
 		upperRight = ur;
 	}
-	
+
 	public BoundingBox(BoundingBox that) {
 		this(that.lowerLeft, that.upperRight);
 	}
@@ -47,7 +47,7 @@ public class BoundingBox implements Serializable{
 	}
 
 	public double getLongitudeSize() {
-		
+
 		return upperRight.getLongitude() - lowerLeft.getLongitude();
 	}
 
@@ -57,8 +57,9 @@ public class BoundingBox implements Serializable{
 			return true;
 		if (obj instanceof BoundingBox) {
 			BoundingBox that = (BoundingBox) obj;
-			return lowerLeft.equals(that.lowerLeft) && upperRight.equals(that.upperRight);
-		} 
+			return lowerLeft.equals(that.lowerLeft)
+					&& upperRight.equals(that.upperRight);
+		}
 		return false;
 	}
 
@@ -71,22 +72,24 @@ public class BoundingBox implements Serializable{
 	}
 
 	public boolean contains(Point point) {
-		return (point.getLatitude() >= lowerLeft.getLatitude()) && (point.getLongitude() >= lowerLeft.getLongitude()) 
-		&& (point.getLatitude() <= upperRight.getLatitude()) && (point.getLongitude() <= upperRight.getLongitude());
+		return (point.getLatitude() >= lowerLeft.getLatitude())
+				&& (point.getLongitude() >= lowerLeft.getLongitude())
+				&& (point.getLatitude() <= upperRight.getLatitude())
+				&& (point.getLongitude() <= upperRight.getLongitude());
 	}
 
 	public boolean contains(BoundingBox other) {
 		return (other.lowerLeft.getLongitude() > lowerLeft.getLongitude()
 				&& other.upperRight.getLongitude() < upperRight.getLongitude()
-				&& other.lowerLeft.getLatitude() > lowerLeft.getLatitude()
-				&& other.upperRight.getLatitude() < upperRight.getLatitude());
+				&& other.lowerLeft.getLatitude() > lowerLeft.getLatitude() && other.upperRight
+				.getLatitude() < upperRight.getLatitude());
 	}
 
 	public boolean intersects(BoundingBox other) {
-		return !(other.lowerLeft.getLongitude() > upperRight.getLongitude() 
-				|| other.upperRight.getLongitude() < lowerLeft.getLongitude() 
-				|| other.lowerLeft.getLatitude() > upperRight.getLatitude() 
-				|| other.upperRight.getLatitude() < lowerLeft.getLatitude());
+		return !(other.lowerLeft.getLongitude() > upperRight.getLongitude()
+				|| other.upperRight.getLongitude() < lowerLeft.getLongitude()
+				|| other.lowerLeft.getLatitude() > upperRight.getLatitude() || other.upperRight
+				.getLatitude() < lowerLeft.getLatitude());
 	}
 
 	@Override
@@ -95,8 +98,10 @@ public class BoundingBox implements Serializable{
 	}
 
 	public Point getCenterPoint() {
-		double centerLatitude = (lowerLeft.getLatitude() + upperRight.getLatitude()) / 2;
-		double centerLongitude = (lowerLeft.getLongitude() + upperRight.getLongitude()) / 2;
+		double centerLatitude = (lowerLeft.getLatitude() + upperRight
+				.getLatitude()) / 2;
+		double centerLongitude = (lowerLeft.getLongitude() + upperRight
+				.getLongitude()) / 2;
 		return new Point(centerLatitude, centerLongitude);
 	}
 
@@ -130,20 +135,20 @@ public class BoundingBox implements Serializable{
 	public double getMaxLon() {
 		return upperRight.getLongitude();
 	}
-	
-	public byte[] toBytes()throws Exception{
-		
+
+	public byte[] toBytes() throws Exception {
+
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutputStream ous = new ObjectOutputStream(bos);
 		ous.writeObject(this);
 		ous.close();
 		return bos.toByteArray();
 	}
-	
-	public static BoundingBox fromBytes(byte[] bytes)throws Exception{
-		
+
+	public static BoundingBox fromBytes(byte[] bytes) throws Exception {
+
 		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
 		ObjectInputStream ois = new ObjectInputStream(bis);
-		return (BoundingBox)ois.readObject();
+		return (BoundingBox) ois.readObject();
 	}
 }
