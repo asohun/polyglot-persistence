@@ -4,11 +4,12 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.MasterNotRunningException;
 import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class HadoopUtil {
 
-	private final static Logger log = Logger.getLogger(HadoopUtil.class);
+	private static final Logger log = LogManager.getLogger(HadoopUtil.class);
 
 	public static void main(String[] args) {
 		getHBaseConfiguration();
@@ -36,9 +37,9 @@ public class HadoopUtil {
 	public static Configuration getHDFSConfiguration() {
 		Configuration configuration = new Configuration();
 		configuration.clear();
-		//configuration.addResource(new Path("core-site.xml"));
-		configuration.set("fs.defaultFS", "hdfs://" + Constant.IP_SERVER
-				+ ":" + Constant.PORT_NAMENODE);
+		// configuration.addResource(new Path("core-site.xml"));
+		configuration.set("fs.defaultFS", "hdfs://" + Constant.IP_SERVER + ":"
+				+ Constant.PORT_NAMENODE);
 
 		return configuration;
 	}

@@ -14,13 +14,14 @@ import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.polyglot.hadoop.util.HadoopUtil;
 
 public class TestHBase {
 
-	private final Logger log = Logger.getLogger(TestHDFS.class);
+	private static final Logger log = LogManager.getLogger(TestHBase.class);
 
 	private Configuration configuration;
 
@@ -43,7 +44,8 @@ public class TestHBase {
 		return table;
 	}
 
-	public void get(String tableName, String key, String family) throws IOException {
+	public void get(String tableName, String key, String family)
+			throws IOException {
 		HTableInterface table = createTable(tableName);
 		Get get = new Get(Bytes.toBytes(key));
 		Result result = table.get(get);
@@ -57,7 +59,8 @@ public class TestHBase {
 		}
 	}
 
-	public void put(String tableName, String key, String family) throws IOException {
+	public void put(String tableName, String key, String family)
+			throws IOException {
 		Map<String, byte[]> rows = null;
 		HTable table = new HTable(configuration, tableName);
 		List<Put> puts = new ArrayList<Put>();

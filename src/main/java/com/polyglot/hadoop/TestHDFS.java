@@ -13,13 +13,14 @@ import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.SequenceFile.Metadata;
 import org.apache.hadoop.io.Text;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.polyglot.hadoop.util.HadoopUtil;
 
 public class TestHDFS {
 
-	private static final Logger log = Logger.getLogger(TestHDFS.class);
+	private static final Logger log = LogManager.getLogger(TestHDFS.class);
 
 	private Configuration configuration;
 
@@ -29,7 +30,7 @@ public class TestHDFS {
 
 	public static void main(String[] args) {
 		TestHDFS hdfs = new TestHDFS();
-		
+
 		try {
 			hdfs.createFile("/test1");
 			hdfs.writeSequenceFile("/test1");
@@ -66,8 +67,10 @@ public class TestHDFS {
 		FileContext fileContext = FileContext.getFileContext(configuration);
 		Path path = new Path(file);
 		EnumSet<CreateFlag> createFlag = EnumSet.of(CreateFlag.APPEND);
-		SequenceFile.Writer sequenceWriter = SequenceFile.createWriter(fileContext, configuration, path, Text.class, Text.class, CompressionType.NONE, null, new Metadata(), createFlag);
-		
+		SequenceFile.Writer sequenceWriter = SequenceFile.createWriter(
+				fileContext, configuration, path, Text.class, Text.class,
+				CompressionType.NONE, null, new Metadata(), createFlag);
+
 		Text key = new Text("keySequence");
 		Text value = new Text("valueSequence");
 		sequenceWriter.append(key, value);
