@@ -66,6 +66,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-hdfs</artifactId>
+			<version>${hadoop.version}</version>
+		</dependency>
 		<!-- HBase -->
 		<dependency>
 			<groupId>org.apache.hbase</groupId>

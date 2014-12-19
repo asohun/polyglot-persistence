@@ -1,14 +1,18 @@
 package com.polyglot.hadoop;
 
 import java.io.IOException;
+import java.util.EnumSet;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.CreateFlag;
+import org.apache.hadoop.fs.FileContext;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.io.SequenceFile;
+import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.SequenceFile.Metadata;
-import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.Text;
 import org.apache.log4j.Logger;
 
 import com.polyglot.hadoop.util.HadoopUtil;
@@ -28,6 +32,7 @@ public class TestHDFS {
 		
 		try {
 			hdfs.createFile("/test1");
+			hdfs.writeSequenceFile("/test1");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -58,15 +63,14 @@ public class TestHDFS {
 	}
 
 	public void writeSequenceFile(String file) throws IOException {
-		FileSystem fs = FileSystem.get(configuration);
+		FileContext fileContext = FileContext.getFileContext(configuration);
 		Path path = new Path(file);
-		SequenceFile.Writer sequenceWriter = new SequenceFile.Writer(fs,
-				configuration, path, String.class, String.class, fs.getConf()
-						.getInt("io.file.buffer.size", 4096),
-				fs.getDefaultReplication(path), 1073741824, null,
-				new Metadata());
-		Writable bytesWritable = null;
-		sequenceWriter.append(bytesWritable, bytesWritable);
+		EnumSet<CreateFlag> createFlag = EnumSet.of(CreateFlag.APPEND);
+		SequenceFile.Writer sequenceWriter = SequenceFile.createWriter(fileContext, configuration, path, Text.class, Text.class, CompressionType.NONE, null, new Metadata(), createFlag);
+		
+		Text key = new Text("keySequence");
+		Text value = new Text("valueSequence");
+		sequenceWriter.append(key, value);
 		IOUtils.closeStream(sequenceWriter);
 	}
 

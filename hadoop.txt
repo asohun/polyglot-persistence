@@ -12,7 +12,12 @@ dpkg-reconfigure locales
 
 3) Configure JRE
 Downlaod and extract JRE
+cd /usr/local
+sudo tar xzf jre.tar.gz
+sudo ln -s jre java
 Set /etc/profile
+export JAVA_HOME
+export PATH=$PATH:$JAVA_HOME/bin
 
 4) Create group and user
 sudo addgroup hadoop
@@ -80,6 +85,12 @@ export PATH=$PATH:$HADOOP_HOME/bin
 NOTES
 1) You need to make sure the core-site.xml is serving to 0.0.0.0 instead of 127.0.0.1(localhost).
 If you get the EOF exception, it means that the port is not accessible externally on that ip, so there is no data to read between the hadoop client / server ipc.
+
+2) Add user accessing HDFS
+groupadd supergroup
+usermod -a -G supergroup spry 
+
+3) hadoop namenode -format
 
 
 -> chk how to fix port of datanode

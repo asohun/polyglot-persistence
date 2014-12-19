@@ -36,7 +36,8 @@ public class HadoopUtil {
 	public static Configuration getHDFSConfiguration() {
 		Configuration configuration = new Configuration();
 		configuration.clear();
-		configuration.set("fs.default.name", "hdfs://" + Constant.IP_SERVER
+		//configuration.addResource(new Path("core-site.xml"));
+		configuration.set("fs.defaultFS", "hdfs://" + Constant.IP_SERVER
 				+ ":" + Constant.PORT_NAMENODE);
 
 		return configuration;
