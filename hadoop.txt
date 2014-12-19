@@ -28,7 +28,7 @@ sudo apt-get install ssh
 
 6) Configure system for installation
 su - hduser
-ssh-keygen -t rsa -P ‘’
+ssh-keygen -t rsa -P ������
 cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 ssh localhost & exit to test
 
@@ -87,8 +87,8 @@ NOTES
 If you get the EOF exception, it means that the port is not accessible externally on that ip, so there is no data to read between the hadoop client / server ipc.
 
 2) Add user accessing HDFS
-groupadd supergroup
-usermod -a -G supergroup spry 
+sudo groupadd supergroup
+sudo useradd --ingroup supergroup asohun 
 
 3) hadoop namenode -format
 

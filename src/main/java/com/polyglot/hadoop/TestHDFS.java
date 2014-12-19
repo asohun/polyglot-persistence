@@ -5,6 +5,8 @@ import java.util.EnumSet;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.CreateFlag;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileContext;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -32,8 +34,9 @@ public class TestHDFS {
 		TestHDFS hdfs = new TestHDFS();
 
 		try {
-			hdfs.createFile("/test1");
-			hdfs.writeSequenceFile("/test1");
+			//hdfs.createFile("/test1");
+			hdfs.read("/test1");
+			// hdfs.writeSequenceFile("/test1");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -58,9 +61,22 @@ public class TestHDFS {
 		if (created) {
 			log.debug(path + " created");
 		}
+	}
 
-		// FSDataInputStream in = fs.open(filePath);
-		// FSDataOutputStream out = fs.create(filePath);
+	public void write(String file) throws IOException {
+		FileSystem fs = FileSystem.get(configuration);
+		Path path = new Path(file);
+		FSDataOutputStream out = fs.append(path);
+		out.write("test".getBytes());
+	}
+
+	public void read(String file) throws IOException {
+		FileSystem fs = FileSystem.get(configuration);
+		Path path = new Path(file);
+		FSDataInputStream in = fs.open(path);
+		byte[] bytes = new byte[500];
+		in.read(bytes);
+		System.out.println(bytes);
 	}
 
 	public void writeSequenceFile(String file) throws IOException {
