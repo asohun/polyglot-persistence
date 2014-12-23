@@ -4,12 +4,12 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.MasterNotRunningException;
 import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HadoopUtil {
 
-	private static final Logger log = LogManager.getLogger(HadoopUtil.class);
+	private static final Logger log = LoggerFactory.getLogger(HadoopUtil.class);
 
 	public static void main(String[] args) {
 		getHBaseConfiguration();
@@ -18,10 +18,10 @@ public class HadoopUtil {
 	public static Configuration getHBaseConfiguration() {
 		Configuration configuration = new Configuration();
 		configuration.clear();
-		// configuration.set("hbase.zookeeper.quorum", Constant.SERVER_IP);
-		// configuration.set("hbase.zookeeper.property.clientPort", "2181");
-		// configuration.set("hbase.master", Constant.SERVER_IP + ":60010");
-		//
+		configuration.set("hbase.zookeeper.quorum", Constant.IP_SERVER);
+		configuration.set("hbase.zookeeper.property.clientPort", "2181");
+		configuration.set("hbase.master", Constant.IP_SERVER + ":60010");
+
 		try {
 			HBaseAdmin.checkHBaseAvailable(configuration);
 			log.info("HBase Running");
@@ -40,7 +40,8 @@ public class HadoopUtil {
 		// configuration.addResource(new Path("core-site.xml"));
 		configuration.set("fs.defaultFS", "hdfs://" + Constant.IP_SERVER + ":"
 				+ Constant.PORT_NAMENODE);
-
+		configuration.set("hadoop.tmp.dir", "/app/hadoop/tmp");
+		configuration.set("hadoop.home.dir", "/usr/local/hadoop");
 		return configuration;
 	}
 }

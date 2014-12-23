@@ -14,19 +14,23 @@ import org.apache.hadoop.hbase.client.HTablePool;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.polyglot.hadoop.util.HadoopUtil;
 
 public class TestHBase {
 
-	private static final Logger log = LogManager.getLogger(TestHBase.class);
+	private static final Logger log = LoggerFactory.getLogger(TestHBase.class);
 
 	private Configuration configuration;
 
 	public TestHBase() {
 		configuration = HadoopUtil.getHBaseConfiguration();
+	}
+	
+	public static void main(String[] args) {
+		TestHBase test = new TestHBase();
 	}
 
 	public HTableInterface createTable(String tableName) throws IOException {

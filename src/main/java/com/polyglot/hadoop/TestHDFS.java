@@ -1,11 +1,13 @@
 package com.polyglot.hadoop;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.EnumSet;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.CreateFlag;
-import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileContext;
 import org.apache.hadoop.fs.FileSystem;
@@ -15,14 +17,15 @@ import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
 import org.apache.hadoop.io.SequenceFile.Metadata;
 import org.apache.hadoop.io.Text;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.hadoop.util.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.polyglot.hadoop.util.HadoopUtil;
 
 public class TestHDFS {
 
-	private static final Logger log = LogManager.getLogger(TestHDFS.class);
+	private static final Logger log = LoggerFactory.getLogger(TestHDFS.class);
 
 	private Configuration configuration;
 
@@ -32,16 +35,24 @@ public class TestHDFS {
 
 	public static void main(String[] args) {
 		TestHDFS hdfs = new TestHDFS();
-
 		try {
-			//hdfs.createFile("/test1");
+			// hdfs.createFile("/test1");
 			hdfs.read("/test1");
-			// hdfs.writeSequenceFile("/test1");
+			// hdfs.createFile("/test2");
+			// hdfs.writeSequenceFile("/test2", "keySequence", "valueSequence");
+			// hdfs.readSequenceFile("/test2");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Create a text file
+	 * 
+	 * @param file
+	 *            the string representing the path of the file
+	 * @throws IOException
+	 */
 	public void createFile(String file) throws IOException {
 		FileSystem fs = FileSystem.get(configuration);
 
@@ -63,23 +74,63 @@ public class TestHDFS {
 		}
 	}
 
-	public void write(String file) throws IOException {
+	/**
+	 * Write text content to a text file
+	 * 
+	 * @param file
+	 *            the string representing the path of the file
+	 * @param content
+	 *            the string representing the content to write to the file
+	 * @throws IOException
+	 */
+	public void write(String file, String content) throws IOException {
 		FileSystem fs = FileSystem.get(configuration);
 		Path path = new Path(file);
 		FSDataOutputStream out = fs.append(path);
-		out.write("test".getBytes());
+		out.write(content.getBytes());
+		out.close();
 	}
 
-	public void read(String file) throws IOException {
+	/**
+	 * Read text file
+	 * 
+	 * @param file
+	 *            the string representing the path of the file
+	 * @return the string representing the content of the file
+	 * @throws IOException
+	 */
+	public String read(String file) throws IOException {
 		FileSystem fs = FileSystem.get(configuration);
 		Path path = new Path(file);
-		FSDataInputStream in = fs.open(path);
-		byte[] bytes = new byte[500];
-		in.read(bytes);
-		System.out.println(bytes);
+		InputStream in = fs.open(path);
+
+		String content = "";
+
+		Writer writer = new StringWriter();
+		org.apache.commons.io.IOUtils.copy(in, writer, "UTF-8");
+		String raw = writer.toString();
+		for (String str : raw.split("\n")) {
+			content += str + " ";
+		}
+
+		in.close();
+
+		log.debug(content);
+
+		return content;
 	}
 
-	public void writeSequenceFile(String file) throws IOException {
+	/**
+	 * @param file
+	 *            the string representing the path of the file
+	 * @param key
+	 *            the string representing the key of the sequence
+	 * @param value
+	 *            the string representing the value of the sequence
+	 * @throws IOException
+	 */
+	public void writeSequenceFile(String file, String key, String value)
+			throws IOException {
 		FileContext fileContext = FileContext.getFileContext(configuration);
 		Path path = new Path(file);
 		EnumSet<CreateFlag> createFlag = EnumSet.of(CreateFlag.APPEND);
@@ -87,10 +138,30 @@ public class TestHDFS {
 				fileContext, configuration, path, Text.class, Text.class,
 				CompressionType.NONE, null, new Metadata(), createFlag);
 
-		Text key = new Text("keySequence");
-		Text value = new Text("valueSequence");
-		sequenceWriter.append(key, value);
+		Text textKey = new Text(key);
+		Text textValue = new Text(value);
+		sequenceWriter.append(textKey, textValue);
 		IOUtils.closeStream(sequenceWriter);
+	}
+
+	/**
+	 * @param file
+	 *            the string representing the path of the file
+	 * @throws IOException
+	 */
+	public void readSequenceFile(String file) throws IOException {
+		Path path = new Path(file);
+		SequenceFile.Reader reader = new SequenceFile.Reader(configuration,
+				SequenceFile.Reader.file(path));
+		Text key = (Text) ReflectionUtils.newInstance(reader.getKeyClass(),
+				configuration);
+		Text value = (Text) ReflectionUtils.newInstance(reader.getValueClass(),
+				configuration);
+		while (reader.next(key, value)) {
+			log.debug("key : " + key + " - value : "
+					+ new String(value.getBytes()));
+		}
+		IOUtils.closeStream(reader);
 	}
 
 }
