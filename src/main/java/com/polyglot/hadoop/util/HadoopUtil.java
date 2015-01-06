@@ -18,8 +18,8 @@ public class HadoopUtil {
 	public static Configuration getHBaseConfiguration() {
 		Configuration configuration = new Configuration();
 		configuration.clear();
-		configuration.set("hbase.zookeeper.quorum", Constant.IP_SERVER);
-		configuration.set("hbase.zookeeper.property.clientPort", "2181");
+		//configuration.set("hbase.zookeeper.quorum", Constant.IP_SERVER);
+		//configuration.set("hbase.zookeeper.property.clientPort", "2181");
 		configuration.set("hbase.master", Constant.IP_SERVER + ":60010");
 
 		try {

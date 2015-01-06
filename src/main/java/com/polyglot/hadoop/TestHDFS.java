@@ -36,8 +36,9 @@ public class TestHDFS {
 	public static void main(String[] args) {
 		TestHDFS hdfs = new TestHDFS();
 		try {
-			// hdfs.createFile("/test1");
-			hdfs.read("/test1");
+			//hdfs.createFile("/test2");
+			//hdfs.write("/test2", "testWrite");
+			hdfs.read("/test2");
 			// hdfs.createFile("/test2");
 			// hdfs.writeSequenceFile("/test2", "keySequence", "valueSequence");
 			// hdfs.readSequenceFile("/test2");
@@ -72,6 +73,8 @@ public class TestHDFS {
 		if (created) {
 			log.debug(path + " created");
 		}
+		
+		fs.close();
 	}
 
 	/**
@@ -89,6 +92,7 @@ public class TestHDFS {
 		FSDataOutputStream out = fs.append(path);
 		out.write(content.getBytes());
 		out.close();
+		fs.close();
 	}
 
 	/**
@@ -114,7 +118,7 @@ public class TestHDFS {
 		}
 
 		in.close();
-
+		fs.close();
 		log.debug(content);
 
 		return content;
