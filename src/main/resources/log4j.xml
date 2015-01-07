@@ -16,7 +16,7 @@
 			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
 		</layout>
 	</appender>
-	<logger name="com.polyglot.hadoop.TestHDFS" additivity="false">
+	<logger name="com.polyglot.hadoop" additivity="false">
 		<level value="debug" />
 		<appender-ref ref="console" />
 	</logger>

@@ -23,6 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import com.polyglot.hadoop.util.HadoopUtil;
 
+/**
+ * @author asohun
+ */
 public class TestHDFS {
 
 	private static final Logger log = LoggerFactory.getLogger(TestHDFS.class);
@@ -36,9 +39,9 @@ public class TestHDFS {
 	public static void main(String[] args) {
 		TestHDFS hdfs = new TestHDFS();
 		try {
-			//hdfs.createFile("/test2");
-			//hdfs.write("/test2", "testWrite");
-			hdfs.read("/test2");
+			//hdfs.createFile("/test3");
+			hdfs.write("/test3", "testWrite3");
+			//hdfs.read("/test2");
 			// hdfs.createFile("/test2");
 			// hdfs.writeSequenceFile("/test2", "keySequence", "valueSequence");
 			// hdfs.readSequenceFile("/test2");
