@@ -39,13 +39,13 @@ public class TestHDFS {
 	public static void main(String[] args) {
 		TestHDFS hdfs = new TestHDFS();
 		try {
-			//hdfs.createFile("/test3");
+			// hdfs.createFile("/test3");
 			hdfs.write("/test3", "testWrite3");
-			//hdfs.read("/test2");
+			// hdfs.read("/test2");
 			// hdfs.createFile("/test2");
 			// hdfs.writeSequenceFile("/test2", "keySequence", "valueSequence");
 			// hdfs.readSequenceFile("/test2");
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -76,7 +76,7 @@ public class TestHDFS {
 		if (created) {
 			log.debug(path + " created");
 		}
-		
+
 		fs.close();
 	}
 
@@ -89,13 +89,35 @@ public class TestHDFS {
 	 *            the string representing the content to write to the file
 	 * @throws IOException
 	 */
-	public void write(String file, String content) throws IOException {
-		FileSystem fs = FileSystem.get(configuration);
-		Path path = new Path(file);
-		FSDataOutputStream out = fs.append(path);
-		out.write(content.getBytes());
-		out.close();
-		fs.close();
+	public void write(String file, String content) {
+		FileSystem fs = null;
+		FSDataOutputStream out = null;
+
+		try {
+			fs = FileSystem.get(configuration);
+			Path path = new Path(file);
+			out = fs.append(path);
+			out.write(content.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if (fs != null) {
+				try {
+					fs.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
 	}
 
 	/**
