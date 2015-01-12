@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ServiceException;
 
-public class HadoopUtil {
+public class HBaseUtil {
 
-	private static final Logger log = LoggerFactory.getLogger(HadoopUtil.class);
+	private static final Logger log = LoggerFactory.getLogger(HBaseUtil.class);
 
 	public static Configuration getHBaseConfiguration() {
 		Configuration configuration = new Configuration();
@@ -39,14 +39,4 @@ public class HadoopUtil {
 		return configuration;
 	}
 
-	public static Configuration getHDFSConfiguration() {
-		Configuration configuration = new Configuration();
-		configuration.clear();
-		// configuration.addResource(new Path("core-site.xml"));
-		configuration.set("fs.defaultFS", "hdfs://" + Constant.IP_SERVER + ":"
-				+ Constant.PORT_NAMENODE);
-		configuration.set("hadoop.tmp.dir", "/app/hadoop/tmp");
-		configuration.set("hadoop.home.dir", "/usr/local/hadoop");
-		return configuration;
-	}
 }

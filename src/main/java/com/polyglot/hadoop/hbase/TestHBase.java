@@ -1,4 +1,4 @@
-package com.polyglot.hadoop;
+package com.polyglot.hadoop.hbase;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polyglot.hadoop.util.HadoopUtil;
+import com.polyglot.hadoop.util.HBaseUtil;
 
 /**
  * @author asohun
@@ -29,20 +29,20 @@ public class TestHBase {
 
 	private Configuration configuration;
 
-	public static void main(String[] args) {
-		TestHBase test = new TestHBase();
-		try {
-			test.getTable("table1");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	/**
 	 * Default constructor
 	 */
 	public TestHBase() {
-		configuration = HadoopUtil.getHBaseConfiguration();
+		configuration = HBaseUtil.getHBaseConfiguration();
+	}
+	
+	public static void main(String[] args) {
+		TestHBase hbase = new TestHBase();
+		String operation = args[0];
+
+		if ("create".equals(operation)) {
+			hbase.create(args[1]);
+		}
 	}
 
 	/**
@@ -51,11 +51,16 @@ public class TestHBase {
 	 * @param tableName
 	 *            string representing the name of the table
 	 * @return hTableInterface representing the created table
-	 * @throws IOException
 	 */
-	public HTableInterface createTable(String tableName) throws IOException {
-		HTableInterface table = new HTable(configuration, tableName);
-		log.debug("Table " + tableName + " created.");
+	public HTableInterface create(String tableName) {
+		HTableInterface table = null;
+		try {
+			table = new HTable(configuration, tableName);
+			log.debug("Table " + tableName + " created.");
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		}
+
 		return table;
 	}
 
@@ -65,31 +70,52 @@ public class TestHBase {
 	 * @param tableName
 	 *            string representing the name of the table
 	 * @return hTableInterface representing the retrieved table
-	 * @throws IOException
 	 */
-	public HTableInterface getTable(String tableName) throws IOException {
-		HConnection connection = HConnectionManager
-				.createConnection(configuration);
-		HTableInterface table = connection.getTable(tableName);
-		connection.close();
+	public HTableInterface getTable(String tableName) {
+		HConnection connection = null;
+		HTableInterface table = null;
 
-		log.debug(table.toString() + " retrieved");
+		try {
+			connection = HConnectionManager.createConnection(configuration);
+			table = connection.getTable(tableName);
+			log.debug(table.toString() + " retrieved");
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		} finally {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (IOException e) {
+					log.error(e.getMessage());
+				}
+			}
+		}
 
 		return table;
 	}
 
-	public void get(String tableName, String key, String family)
-			throws IOException {
+	public void get(String tableName, String key, String family) {
 		HTableInterface table = getTable(tableName);
 		Get get = new Get(Bytes.toBytes(key));
-		Result result = table.get(get);
-		NavigableMap<byte[], byte[]> familyValues = result.getFamilyMap(Bytes
-				.toBytes(family));
-		for (Map.Entry<byte[], byte[]> entry : familyValues.entrySet()) {
-			String column = Bytes.toString(entry.getKey());
-			byte[] value = entry.getValue();
+		Result result = null;
 
-			log.info(column + " - " + value);
+		if (table != null) {
+			try {
+				result = table.get(get);
+			} catch (IOException e) {
+				log.error(e.getMessage());
+			}
+		}
+
+		if (result != null) {
+			NavigableMap<byte[], byte[]> familyValues = result
+					.getFamilyMap(Bytes.toBytes(family));
+			for (Map.Entry<byte[], byte[]> entry : familyValues.entrySet()) {
+				String column = Bytes.toString(entry.getKey());
+				byte[] value = entry.getValue();
+
+				log.info(column + " - " + value);
+			}
 		}
 	}
 

@@ -17,9 +17,21 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.polyglot.hadoop.util.HDFSUtil;
 
 public class WordCount extends Configured implements Tool {
-	
+
+	private static final Logger log = LoggerFactory.getLogger(WordCount.class);
+
+	private Configuration configuration;
+
+	public WordCount() {
+		configuration = HDFSUtil.getHDFSConfiguration();
+	}
+
 	public static class Map extends
 			Mapper<LongWritable, Text, Text, IntWritable> {
 		private final static IntWritable one = new IntWritable(1);
@@ -28,6 +40,7 @@ public class WordCount extends Configured implements Tool {
 		@Override
 		public void map(LongWritable key, Text value, Context context)
 				throws IOException, InterruptedException {
+			log.debug("Map executed.");
 			String line = value.toString();
 			StringTokenizer tokenizer = new StringTokenizer(line);
 			while (tokenizer.hasMoreTokens()) {
@@ -42,6 +55,7 @@ public class WordCount extends Configured implements Tool {
 		@Override
 		public void reduce(Text key, Iterable<IntWritable> val, Context context)
 				throws IOException, InterruptedException {
+			log.debug("Reduce executed.");
 			int sum = 0;
 			Iterator<IntWritable> values = val.iterator();
 			while (values.hasNext()) {
@@ -52,18 +66,14 @@ public class WordCount extends Configured implements Tool {
 	}
 
 	public int run(String[] args) throws Exception {
-		Configuration conf = new Configuration();
-		Job job = new Job(conf, "Word Count");
+		Job job = Job.getInstance(configuration);
 		job.setJarByClass(WordCount.class);
 
 		// Set up the input
 		job.setInputFormatClass(TextInputFormat.class);
 		TextInputFormat.addInputPath(job, new Path(args[0]));
 
-		// Mapper
 		job.setMapperClass(Map.class);
-
-		// Reducer
 		job.setReducerClass(Reduce.class);
 
 		// Output
@@ -74,14 +84,16 @@ public class WordCount extends Configured implements Tool {
 
 		// Execute
 		boolean res = job.waitForCompletion(true);
-		if (res)
+		if (res) {
 			return 0;
-		else
+		} else {
 			return -1;
+		}
 	}
 
 	public static void main(String[] args) throws Exception {
 		int res = ToolRunner.run(new WordCount(), args);
 		System.exit(res);
 	}
+
 }
