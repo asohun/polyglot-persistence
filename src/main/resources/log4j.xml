@@ -11,17 +11,20 @@
 		<param name="append" value="false" />
 		<param name="maxFileSize" value="10KB" />
 		<param name="maxBackupIndex" value="5" />
-		<param name="file" value="E:/Anoop/App.log" />
+		<param name="file" value="/home/hduser/hadoop.log" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
 		</layout>
 	</appender>
-	<logger name="com.polyglot" additivity="false">
+	<!-- Logger com.polyglot needs to be added in Hadoop's log4j.properties 
+		log4j.logger.com.polyglot=DEBUG,console
+		log4j.additivity.com.polyglot=false -->
+	<!-- logger name="com.polyglot" additivity="false">
 		<level value="debug" />
 		<appender-ref ref="console" />
-	</logger>
+	</logger -->
 	<root>
-		<priority value="error" />
+		<priority value="debug" />
 		<appender-ref ref="console" />
 	</root>
 </log4j:configuration>

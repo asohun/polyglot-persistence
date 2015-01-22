@@ -22,16 +22,27 @@ import org.slf4j.LoggerFactory;
 
 import com.polyglot.hadoop.util.HDFSUtil;
 
+/**
+ * @author anoop
+ */
 public class WordCount extends Configured implements Tool {
 
 	private static final Logger log = LoggerFactory.getLogger(WordCount.class);
 
 	private Configuration configuration;
 
+	/**
+	 * Default constructor.
+	 */
 	public WordCount() {
 		configuration = HDFSUtil.getHDFSConfiguration();
 	}
 
+	/**
+	 * Map function.
+	 * 
+	 * @author anoop
+	 */
 	public static class Map extends
 			Mapper<LongWritable, Text, Text, IntWritable> {
 		private final static IntWritable one = new IntWritable(1);
@@ -40,31 +51,41 @@ public class WordCount extends Configured implements Tool {
 		@Override
 		public void map(LongWritable key, Text value, Context context)
 				throws IOException, InterruptedException {
-			log.debug("Map executed.");
+			log.debug("Executing map function.");
 			String line = value.toString();
 			StringTokenizer tokenizer = new StringTokenizer(line);
 			while (tokenizer.hasMoreTokens()) {
-				word.set(tokenizer.nextToken());
+				String token = tokenizer.nextToken();
+				word.set(token);
 				context.write(word, one);
 			}
 		}
 	}
 
+	/**
+	 * Reduce function.
+	 * 
+	 * @author anoop
+	 */
 	public static class Reduce extends
 			Reducer<Text, IntWritable, Text, IntWritable> {
 		@Override
 		public void reduce(Text key, Iterable<IntWritable> val, Context context)
 				throws IOException, InterruptedException {
-			log.debug("Reduce executed.");
+			log.debug("Executing reduce function.");
 			int sum = 0;
 			Iterator<IntWritable> values = val.iterator();
 			while (values.hasNext()) {
 				sum += values.next().get();
 			}
+			log.debug(key.toString() + " - " + sum);
 			context.write(key, new IntWritable(sum));
 		}
 	}
 
+	/**
+	 * 
+	 */
 	public int run(String[] args) throws Exception {
 		Job job = Job.getInstance(configuration);
 		job.setJarByClass(WordCount.class);
@@ -91,6 +112,10 @@ public class WordCount extends Configured implements Tool {
 		}
 	}
 
+	/**
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		int res = ToolRunner.run(new WordCount(), args);
 		System.exit(res);
