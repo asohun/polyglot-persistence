@@ -1,0 +1,9 @@
+{"namespace": "com.polyglot.avro",
+ "type": "record",
+ "name": "AvroUser",
+ "fields": [
+     {"name": "name", "type": "string"},
+     {"name": "favouriteNumber",  "type": ["int", "null"]},
+     {"name": "favouriteColour", "type": ["null", "string"]}
+ ]
+}

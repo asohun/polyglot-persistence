@@ -9,12 +9,12 @@
 	<properties>
 		<hbase.version>0.98.8-hadoop2</hbase.version>
 		<hadoop.version>2.5.2</hadoop.version>
+		<aws.version>1.9.17</aws.version>
+		<avro.version>1.7.7</avro.version>
 	</properties>
 	<repositories>
-		<!-- repository>
-			<id>CDH Releases and RCs Repositories</id>
-			<url>https://repository.cloudera.com/content/groups/cdh-releases-rcs</url>
-		</repository -->
+		<!-- repository> <id>CDH Releases and RCs Repositories</id> <url>https://repository.cloudera.com/content/groups/cdh-releases-rcs</url> 
+			</repository -->
 		<repository>
 			<id>Apache</id>
 			<url>https://repo1.maven.org/maven2</url>
@@ -83,6 +83,18 @@
 			<artifactId>avro</artifactId>
 			<version>1.7.7</version>
 		</dependency>
+		<!-- AWS -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>${aws.version}</version>
+		</dependency>
+		<!-- Avro -->
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro</artifactId>
+			<version>${avro.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
@@ -94,6 +106,25 @@
 				</excludes>
 			</resource>
 		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro-maven-plugin</artifactId>
+				<version>${avro.version}</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>schema</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>${project.basedir}/src/main/resources/avro/</sourceDirectory>
+							<outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 	<profiles>
 		<profile>
