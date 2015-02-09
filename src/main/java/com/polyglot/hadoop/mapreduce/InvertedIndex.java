@@ -8,14 +8,13 @@ import java.util.StringTokenizer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
@@ -83,27 +82,20 @@ public class InvertedIndex extends Configured implements Tool {
 		job.setJarByClass(InvertedIndex.class);
 
 		// Set up the input
-		job.setInputFormatClass(TextInputFormat.class);
-		TextInputFormat.addInputPath(job, new Path(args[0]));
-		// job.setInputFormatClass(SequenceFileInputFormat.class);
-		// SequenceFileInputFormat.addInputPath(job, new Path(args[0]));
+		job.setInputFormatClass(SequenceFileInputFormat.class);
+		SequenceFileInputFormat.addInputPath(job, new Path(args[0]));
 
 		job.setMapperClass(Map.class);
-		// job.setMapOutputKeyClass(Text.class);
-		// job.setMapOutputValueClass(IndexDescriptor.class);
+		job.setMapOutputKeyClass(Text.class);
+		job.setMapOutputValueClass(IndexDescriptor.class);
 
 		job.setReducerClass(Reduce.class);
 
 		// Output
-		job.setOutputFormatClass(TextOutputFormat.class);
+		job.setOutputFormatClass(SequenceFileOutputFormat.class);
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(IntWritable.class);
-		TextOutputFormat.setOutputPath(job, new Path(args[1]));
-		// job.setOutputFormatClass(SequenceFileOutputFormat.class);
-		// job.setOutputKeyClass(Text.class);
-		// job.setOutputValueClass(IndexDescriptor.class);
-		// SequenceFileOutputFormat.setOutputPath(job,new Path(args[1] +
-		// "/tmp"));
+		job.setOutputValueClass(IndexDescriptor.class);
+		SequenceFileOutputFormat.setOutputPath(job, new Path(args[1]));
 
 		// Execute
 		boolean res = job.waitForCompletion(true);
